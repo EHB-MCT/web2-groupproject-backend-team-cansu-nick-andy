@@ -1,20 +1,28 @@
 const express = require("express");
+const bodyparser = require("body-parser");
+const cors = require("cors");
 const app = express();
-const router = express.Router();
+const challengeRouter = express.Router();
 const port = process.env.PORT || 3000;
+const {ObjectID} = require("mongodb");
+
+// Challenge class
+
+class Challenge{
+  constructor(){
+    this.name = "";
+    this.points = 0;
+    this.course = "";
+  }
+}
 
 // Mongo
 const MongoClient = require("mongodb").MongoClient;
 const uri =
-  "mongodb+srv://team-cansu:<password>@cluster0.wror6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  "mongodb+srv://team-cansu:team-cansu@cluster0.wror6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-client.connect((err) => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
 });
 const DB_NAME = "team-cansu";
 
@@ -27,29 +35,55 @@ app.use(bodyparser.json());
 app.use(cors());
 
 // Router
-router
-  .route("/challenges")
+challengeRouter
+  .route('/challenges')
   .get((req, res) => {
-    // hier komt nog
+    collection = db.collection("challenges");
+    collection.find({}).toArray((error, result) => {
+      if(error) {
+        return res.status(500).send(error);
+      }
+      res.json(result);
+    });
   })
   .post((req, res) => {
-    // hier komt nog
+    let challenge = new Challenge;
+    challenge.name = req.body.name;
+    challenge.points = req.body.points;
+    challenge.course = req.body.course;
+
+    collection = db.collection("challenges");
+    collection.insertOne(challenge).then(result => {
+      console.log(result);
+    });
+    res.send(`Succesfully added challenge ${challenge.name} to the database`);
   });
 
-router
-  .route("/challenges/:id")
+challengeRouter
+  .route('/challenges/:id')
   .put((req, res) => {
     // hier komt nog
   })
   .delete((req, res) => {
-    // hier komt nog
+    async function run(){
+      try{
+        collection = db.collection("challenges");
+        let id = new ObjectID(req.params.id);
+        const result = await collection.deleteOne({_id : id});
+        res.json("deleted");
+      }
+      catch(err){
+        return err;
+      }
+    }
+    run();
   });
 
-app.use("/api", router);
+app.use("/api", challengeRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
-  client.connection((err) => {
+  client.connect(err => {
     if (err) {
       throw err;
     }
