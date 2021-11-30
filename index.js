@@ -62,7 +62,37 @@ challengeRouter
 challengeRouter
   .route('/challenges/:id')
   .put((req, res) => {
-    // hier komt nog
+    async function run() {
+      try{
+        collection = db.collection("challenges");
+        let id = new ObjectID(req.params.id);
+        let field = req.body.field;
+        let value = req.body.value;
+        let result;
+        switch(field){
+          case "name":{
+            result = await collection.updateOne({_id : id},
+              {$set : {"name" : value}});
+            break;
+          }
+          case "points": {
+            result = await collection.updateOne({_id : id},
+              {$set : {"points" : value}});
+            break;
+          }
+          case "course": {
+            result = await collection.updateOne({_id : id},
+              {$set : {"course" : value}});
+            break;
+          }
+        }
+        res.send("ok");
+      }
+      catch(err){
+        return err;
+      }
+    }
+    run();
   })
   .delete((req, res) => {
     async function run(){
