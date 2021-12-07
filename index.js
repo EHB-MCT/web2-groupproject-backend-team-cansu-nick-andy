@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const cors = require("cors");
+//const config = require('./config.json');
+require('dotenv').config()
 const app = express();
 const challengeRouter = express.Router();
 const port = process.env.PORT || 3000;
@@ -16,10 +18,11 @@ class Challenge{
   }
 }
 
+
 // Mongo
 const MongoClient = require("mongodb").MongoClient;
 const uri =
-  "mongodb+srv://team-cansu:team-cansu@cluster0.wror6.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+  process.env.FINAL_URL;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
