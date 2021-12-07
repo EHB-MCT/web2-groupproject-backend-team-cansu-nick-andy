@@ -76,7 +76,7 @@ challengeRouter
         return err;
       }
     }
-    run()
+    run();
   })
   .put((req, res) => {
     async function run() {
@@ -103,7 +103,7 @@ challengeRouter
             break;
           }
         }
-        res.send("ok");
+        res.json(result);
       }
       catch(err){
         return err;
@@ -117,7 +117,7 @@ challengeRouter
         collection = db.collection("challenges");
         let id = new ObjectID(req.params.id);
         const result = await collection.deleteOne({_id : id});
-        res.json("deleted");
+        res.json(result);
       }
       catch(err){
         return err;
