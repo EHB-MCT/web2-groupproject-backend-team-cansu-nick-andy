@@ -64,6 +64,20 @@ challengeRouter
 
 challengeRouter
   .route('/challenges/:id')
+  .get((req,res) => {
+    async function run(){
+      try{
+        collection = db.collection("challenges");
+        let id = new ObjectID(req.params.id);
+        const result = await collection.findOne({_id : id});
+        res.json(result);
+      }
+      catch(err){
+        return err;
+      }
+    }
+    run()
+  })
   .put((req, res) => {
     async function run() {
       try{
